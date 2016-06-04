@@ -1,0 +1,46 @@
+from module import Module
+from author import Author
+from datetime import datetime
+
+class Course:
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return 'name="{0}", title="{1}"'.format(self.courseName, self.title)
+
+    @property
+    def authors(self):
+        return [Author(a) for a in self.data['authors']]
+
+    @property
+    def description(self):
+        return self.data['description']
+
+    @property
+    def duration(self):
+        return self.data['durationInMilliseconds']
+
+    @property
+    def title(self):
+        return self.data['title']
+
+    @property
+    def rating(self):
+        return self.data['averageRating']
+
+    @property
+    def releaseDate(self):
+        return datetime.strptime(self.data['releaseDate'], '%Y-%m-%dT%H:%M:%SZ')
+
+    @property
+    def name(self):
+        return self.data['name']
+
+    @property
+    def image(self):
+        return self.data['imageUrl'] or self.data['defaultImageUrl']
+
+    @property
+    def modules(self):
+        return [Module(self, m) for m in self.data['modules']]

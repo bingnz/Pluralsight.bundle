@@ -1,0 +1,10 @@
+{
+    "PREF_USERNAME": "Username",
+    "PREF_PASSWORD": "Password",
+    "ERROR_FAILED_LOGIN": "Invalid username or password.",
+    "ERROR_UNSPECIFIED_LOGIN": "Please configure your login credentials.",
+    "LOGIN_FAILED_HEADER": "Login failed",
+    "LOGIN_SUCCEEDED_HEADER": "Login succeeded",
+    "LOGIN_SUCCEEDED_MESSAGE": "You have been logged in successfully.",
+    "RECENT_COURSES": "Recently Viewed"
+}

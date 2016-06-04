@@ -1,0 +1,126 @@
+from config import *
+from recentCourse import RecentCourse
+from course import Course
+from datetime import datetime
+
+class LoginError(Exception):
+    ''' Raise this when a login attempt is not successful. '''
+
+class ClientError(Exception):
+    ''' Raise this when a client request fails. '''
+
+class Client:
+    def __init__(self):
+        self.token = None
+        self.token_expiry_date = None
+
+    @property
+    def username(self):
+        return Prefs['username']
+
+    @property
+    def password(self):
+        return Prefs['password']
+
+    @property
+    def is_logged_in(self):
+        return bool(self.get_login_token())
+
+    def get_url(self, path):
+        return '{0}/{1}'.format(BASE_URL, path)
+
+    def get_login_token(self):
+        tokenExpiration = self.token_expiry_date
+        login_token = None
+        if tokenExpiration:
+            if tokenExpiration > datetime.now():
+                login_token = self.token
+            else:
+                self.token = None
+                self.token_expiry_date = None
+        return login_token
+
+    def login(self, reset = False):
+        if reset:
+            self.token = None
+            self.token_expiry_date = None
+
+        login_token = self.get_login_token()
+        if login_token:
+            return
+
+        if not self.username or not self.password:
+            raise LoginError(L('ERROR_UNSPECIFIED_LOGIN'))
+
+        Log.Info('Logging in...')
+        login_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+        }
+
+        payload = { 'username': self.username, 'password': self.password }
+        login_url = self.get_url('mobile-api/v1/user/signin')
+
+        Log.Debug('Using url: %s', login_url)
+        try:
+            response = HTTP.Request(login_url, values = payload, headers = login_headers, method = 'POST')
+            responseJson = JSON.ObjectFromString(response.content)
+            self.token = responseJson['token']
+            tokenExpiration = responseJson['expiration']
+            self.token_expiry_date = datetime.strptime(tokenExpiration, '%Y-%m-%dT%H:%M:%SZ')
+        except Ex.HTTPError:
+            raise LoginError(L('ERROR_FAILED_LOGIN'))
+
+    def recently_viewed(self):
+        Log.Info('Getting recently viewed courses.')
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        recently_viewed_url = self.get_url('mobile-api/v1/user/courses/recent')
+
+        Log.Debug('Using url: %s', recently_viewed_url)
+        response = HTTP.Request(recently_viewed_url, headers = headers)
+        return [RecentCourse(c) for c in JSON.ObjectFromString(response.content)['collection']]
+
+    def get_course(self, courseName):
+        Log.Info('Getting course "%s".', courseName)
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        course_url = self.get_url('mobile-api/v1/library/courses/{0}'.format(courseName))
+
+        Log.Debug('Using url: %s', course_url)
+        response = HTTP.Request(course_url, headers = headers)
+        return Course(JSON.ObjectFromString(response.content))
+
+
+    def get_video(self, courseName, moduleName, authorHandle, clipIndex, isWidescreen = True):
+        Log.Info('Getting video URL for course="%s", module="%s", author="%s", clip=%s.', courseName, moduleName, authorHandle, clipIndex)
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+
+        format = '1280x720mp4' if isWidescreen else '1024x768mp4'
+
+        videos_url = self.get_url('mobile-api/v1/library/videos')
+        videoRequestDict = { 'author': authorHandle,
+            'course': courseName,
+            'module': moduleName,
+            'moduleindexposition': clipIndex,
+            'format': format }
+
+        videoRequest = JSON.StringFromObject(videoRequestDict)
+
+        Log.Debug('Using url: %s. Posting \'%s\'', videos_url, videoRequest)
+
+        response = HTTP.Request(videos_url, data = videoRequest, headers = headers, method = 'POST')
+        return JSON.ObjectFromString(response.content)['url']

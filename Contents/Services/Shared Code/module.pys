@@ -1,0 +1,49 @@
+from clip import Clip
+from urllib import quote
+from config import *
+
+class Module:
+    def __init__(self, course, data):
+        authorDict = { k:v for k, v in [(a.handle, a.fullName) for a in course.authors] }
+        self.course = course
+        self.data = data
+        self.author = authorDict[self.data['authorHandle']]
+
+    def __repr__(self):
+        return 'name="{0}", title="{1}"'.format(self.name, self.title)
+
+    @property
+    def author(self):
+        return self.author
+
+    @property
+    def authorHandle(self):
+        return self.data['authorHandle']
+
+    @property
+    def clips(self):
+        return sorted([Clip(self, c) for c in self.data['clips']], key = lambda x: x.index)
+
+    @property
+    def duration(self):
+        return self.data['durationInMilliseconds']
+
+    @property
+    def title(self):
+        return self.data['title']
+
+    @property
+    def courseName(self):
+        return self.course.name
+
+    @property
+    def name(self):
+        return self.data['name']
+
+    @property
+    def description(self):
+        return self.data['description']
+
+    @property
+    def url(self):
+        return '{0}/player?course={1}&author={2}&name={3}&clip=0&mode=live'.format(BASE_URL, quote(self.courseName), quote(self.authorHandle), quote(self.name))

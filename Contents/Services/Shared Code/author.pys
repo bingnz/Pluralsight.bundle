@@ -1,0 +1,14 @@
+class Author:
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return 'handle="{0}", fullName="{1}"'.format(self.handle, self.fullName)
+
+    @property
+    def handle(self):
+        return self.data['handle']
+
+    @property
+    def fullName(self):
+        return self.data['fullName']

@@ -1,0 +1,38 @@
+from urllib import quote
+from config import *
+
+class Clip:
+    def __init__(self, module, data):
+        self.module = module
+        self.data = data
+
+    def __repr__(self):
+        return 'name="{0}", title="{1}", index={2}'.format(self.name, self.title, self.index)
+
+    @property
+    def index(self):
+        return int(self.data['index'])
+
+    @property
+    def name(self):
+        return self.data['name']
+
+    @property
+    def title(self):
+        return self.data['title']
+
+    @property
+    def duration(self):
+        return self.data['durationInMilliseconds']
+
+    @property
+    def supportsWidescreen(self):
+        return self.data['supportsWideScreen']
+
+    @property
+    def supportsStandard(self):
+        return self.data['supportsStandard']
+
+    @property
+    def url(self):
+        return '{0}/player?course={1}&author={2}&name={3}&clip={4}&mode=live&widescreen={5}'.format(BASE_URL, quote(self.module.courseName), quote(self.module.authorHandle), quote(self.module.name), self.index, self.supportsWidescreen)

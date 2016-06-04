@@ -1,0 +1,18 @@
+class RecentCourse:
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return 'name="{0}", title="{1}", image="{2}"'.format(self.name, self.title, self.image)
+
+    @property
+    def title(self):
+        return self.data['title']
+
+    @property
+    def name(self):
+        return self.data['courseName']
+
+    @property
+    def image(self):
+        return self.data['imageUrl'] or self.data['defaultImageUrl']
