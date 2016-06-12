@@ -2,12 +2,24 @@ from config import *
 from recentCourse import RecentCourse
 from course import Course
 from datetime import datetime
+from functools import wraps
 
 class LoginError(Exception):
     ''' Raise this when a login attempt is not successful. '''
 
 class ClientError(Exception):
     ''' Raise this when a client request fails. '''
+
+def handle_unauthorised(func):
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Ex.HTTPError as e:
+            if e.code == 401:
+                raise ClientError(L('ERROR_UNAUTHORISED'))
+            raise
+    return func_wrapper
 
 class Client:
     def __init__(self):
@@ -44,6 +56,8 @@ class Client:
         if reset:
             self.token = None
             self.token_expiry_date = None
+            HTTP.ClearCache()
+            HTTP.ClearCookies()
 
         login_token = self.get_login_token()
         if login_token:
@@ -71,6 +85,7 @@ class Client:
         except Ex.HTTPError:
             raise LoginError(L('ERROR_FAILED_LOGIN'))
 
+    @handle_unauthorised
     def recently_viewed(self):
         Log.Info('Getting recently viewed courses.')
 
@@ -85,6 +100,7 @@ class Client:
         response = HTTP.Request(recently_viewed_url, headers = headers)
         return [RecentCourse(c) for c in JSON.ObjectFromString(response.content)['collection']]
 
+    @handle_unauthorised
     def get_course(self, courseName):
         Log.Info('Getting course "%s".', courseName)
 
@@ -99,7 +115,7 @@ class Client:
         response = HTTP.Request(course_url, headers = headers)
         return Course(JSON.ObjectFromString(response.content))
 
-
+    @handle_unauthorised
     def get_video(self, courseName, moduleName, authorHandle, clipIndex, isWidescreen = True):
         Log.Info('Getting video URL for course="%s", module="%s", author="%s", clip=%s.', courseName, moduleName, authorHandle, clipIndex)
 

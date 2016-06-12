@@ -30,6 +30,10 @@ class Course:
         return self.data['averageRating']
 
     @property
+    def level(self):
+        return self.data['level']
+
+    @property
     def releaseDate(self):
         return datetime.strptime(self.data['releaseDate'], '%Y-%m-%dT%H:%M:%SZ')
 
