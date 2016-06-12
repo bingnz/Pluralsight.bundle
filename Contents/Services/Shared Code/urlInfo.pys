@@ -1,0 +1,51 @@
+from urlparse import urlparse, parse_qs
+
+class UrlInfo:
+    def __init__(self, url):
+        self.url = url
+        self.initialised = False
+
+    def firstOrDefault(self, list):
+        return list[0] if list else None
+
+    def parse(self):
+        if self.initialised:
+            return
+
+        parsed = urlparse(self.url)
+        if not parsed or not parsed.query:
+            raise Ex.MediaNotAvailable
+
+        params = parse_qs(parsed.query)
+
+        self.course = self.firstOrDefault(params.get('course'))
+        self.author = self.firstOrDefault(params.get('author'))
+        self.module = self.firstOrDefault(params.get('name'))
+        self.clipIndex = int(self.firstOrDefault(params.get('clip')))
+        self.isWidescreen = bool(self.firstOrDefault(params.get('wideScreen', ['1'])))
+        self.initialised = True
+
+    @property
+    def course(self):
+        self.parse()
+        return self.course
+
+    @property
+    def author(self):
+        self.parse()
+        return self.author
+
+    @property
+    def module(self):
+        self.parse()
+        return self.module
+
+    @property
+    def clipIndex(self):
+        self.parse()
+        return self.clipIndex
+
+    @property
+    def isWidescreen(self):
+        self.parse()
+        return self.isWidescreen
