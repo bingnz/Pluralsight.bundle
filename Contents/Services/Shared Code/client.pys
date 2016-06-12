@@ -1,5 +1,6 @@
 from config import *
 from recentCourse import RecentCourse
+from relatedCourse import RelatedCourse
 from course import Course
 from datetime import datetime
 from functools import wraps
@@ -114,6 +115,36 @@ class Client:
         Log.Debug('Using url: %s', new_course_url)
         response = HTTP.Request(new_course_url, headers = headers)
         return [Course(c) for c in JSON.ObjectFromString(response.content)['collection']]
+
+    @handle_unauthorised
+    def popular_courses(self):
+        Log.Info('Getting popular courses.')
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        popular_course_url = self.get_url('mobile-api/v1/library/popular/courses')
+
+        Log.Debug('Using url: %s', popular_course_url)
+        response = HTTP.Request(popular_course_url, headers = headers)
+        return [Course(c) for c in JSON.ObjectFromString(response.content)['collection']]
+
+    @handle_unauthorised
+    def related_courses(self, courseName):
+        Log.Info('Getting courses related to \'%s\'.', courseName)
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        related_course_url = self.get_url('mobile-api/v1/library/courses/{0}/related'.format(courseName))
+
+        Log.Debug('Using url: %s', related_course_url)
+        response = HTTP.Request(related_course_url, headers = headers)
+        return [RelatedCourse(c) for c in JSON.ObjectFromString(response.content)['collection']]
 
     @handle_unauthorised
     def get_course(self, courseName):

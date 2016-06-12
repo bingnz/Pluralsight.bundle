@@ -8,6 +8,8 @@
     "LOGIN_SUCCEEDED_MESSAGE": "You have been logged in successfully.",
     "RECENT_COURSES": "Recently Viewed",
     "NEW_COURSES": "New",
+    "POPULAR_COURSES": "Popular",
+    "RELATED_COURSES": "Related Courses",
     "ERROR_UNAUTHORISED": "Please ensure you have configured your login credentials.",
     "ERROR_HEADER": "Error"
 }

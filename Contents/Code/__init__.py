@@ -57,6 +57,11 @@ def MainMenu():
                 key = Callback(NewMenu),
                 thumb = R('NewStuff.png'),
                 title = L('NEW_COURSES')
+            ),
+            DirectoryObject(
+                key = Callback(PopularMenu),
+                thumb = R('Popular.png'),
+                title = L('POPULAR_COURSES')
             )
         ]
     )
@@ -107,6 +112,23 @@ def NewMenu():
 
     return oc
 
+@route(PREFIX + '/popular')
+@handle_client_error
+def PopularMenu():
+    Log.Info('PopularMenu')
+    popularCourses = g_client.popular_courses()
+    oc = ObjectContainer(
+            title2 = L('POPULAR_COURSES'),
+            no_cache = True
+        )
+
+    for course in popularCourses:
+        oc.add(
+            CourseObject(course)
+        )
+
+    return oc
+
 @route(PREFIX + '/course')
 @handle_client_error
 def Course(courseName):
@@ -143,6 +165,30 @@ def Modules(courseName):
             episode_count = len(module.clips),
             tags = [course.level]
         ))
+
+    oc.add(DirectoryObject(
+        key = Callback(RelatedCourses, courseName = courseName),
+        title = L('RELATED_COURSES'),
+        thumb = R('More.png')
+    ))
+
+    return oc
+
+@route(PREFIX + '/relatedcourses')
+@handle_client_error
+def RelatedCourses(courseName):
+    Log.Debug('Related courses: %s', courseName)
+    relatedCourses = g_client.related_courses(courseName)
+    oc = ObjectContainer(
+            title1 = L('RELATED_COURSES'),
+            title2 = courseName,
+            no_cache = True
+        )
+
+    for course in relatedCourses:
+        oc.add(
+            Course(course.name)
+        )
 
     return oc
 
