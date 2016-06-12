@@ -4,6 +4,7 @@ from relatedCourse import RelatedCourse
 from course import Course
 from datetime import datetime
 from functools import wraps
+from urllib import quote
 
 class LoginError(Exception):
     ''' Raise this when a login attempt is not successful. '''
@@ -115,6 +116,22 @@ class Client:
         Log.Debug('Using url: %s', new_course_url)
         response = HTTP.Request(new_course_url, headers = headers)
         return [Course(c) for c in JSON.ObjectFromString(response.content)['collection']]
+
+    @handle_unauthorised
+    def search(self, query):
+        Log.Info('Searching for courses matching \'%s\'.', query)
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        search_url = self.get_url('mobile-api/v1/library/search?q={0}&type=course'.format(quote(query)))
+
+        Log.Debug('Using url: %s', search_url)
+        response = HTTP.Request(search_url, headers = headers)
+        results = JSON.ObjectFromString(response.content)['collection']
+        return [Course(c) for c in map(lambda x: x['course'], filter(lambda x: x['type'] == 'course', results))]
 
     @handle_unauthorised
     def popular_courses(self):

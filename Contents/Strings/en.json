@@ -10,6 +10,8 @@
     "NEW_COURSES": "New",
     "POPULAR_COURSES": "Popular",
     "RELATED_COURSES": "Related Courses",
+    "SEARCH": "Search",
+    "SEARCH_RESULTS_FORMAT": "Search Results - '%s'",
     "ERROR_UNAUTHORISED": "Please ensure you have configured your login credentials.",
     "ERROR_HEADER": "Error"
 }

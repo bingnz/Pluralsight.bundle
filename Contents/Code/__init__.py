@@ -62,6 +62,11 @@ def MainMenu():
                 key = Callback(PopularMenu),
                 thumb = R('Popular.png'),
                 title = L('POPULAR_COURSES')
+            ),
+            InputDirectoryObject(
+                key = Callback(SearchResults),
+                thumb = R('Search.png'),
+                title = L('SEARCH')
             )
         ]
     )
@@ -74,7 +79,7 @@ def RecentMenu():
     Log.Info('RecentMenu')
     recentlyViewed = g_client.recently_viewed()
     oc = ObjectContainer(
-            title2 = L('RECENT_COURSES'),
+            title1 = L('RECENT_COURSES'),
             no_cache = True
         )
 
@@ -101,7 +106,7 @@ def NewMenu():
     Log.Info('NewMenu')
     newCourses = g_client.new_courses()
     oc = ObjectContainer(
-            title2 = L('NEW_COURSES'),
+            title1 = L('NEW_COURSES'),
             no_cache = True
         )
 
@@ -118,11 +123,28 @@ def PopularMenu():
     Log.Info('PopularMenu')
     popularCourses = g_client.popular_courses()
     oc = ObjectContainer(
-            title2 = L('POPULAR_COURSES'),
+            title1 = L('POPULAR_COURSES'),
             no_cache = True
         )
 
     for course in popularCourses:
+        oc.add(
+            CourseObject(course)
+        )
+
+    return oc
+
+@route(PREFIX + '/search')
+@handle_client_error
+def SearchResults(query):
+    Log.Info('SearchResults query=\'%s\'', query)
+    oc = ObjectContainer(
+            title1 = F('SEARCH_RESULTS_FORMAT', query)
+        )
+
+    courses = g_client.search(query)
+
+    for course in courses:
         oc.add(
             CourseObject(course)
         )
@@ -150,7 +172,7 @@ def Modules(courseName):
     course = g_client.get_course(courseName)
 
     oc = ObjectContainer(
-             title2 = course.title
+             title1 = course.title
          )
 
     for module in course.modules:
@@ -202,7 +224,7 @@ def Clips(courseName, moduleName):
     module = matchingModules[0] if matchingModules else None
 
     oc = ObjectContainer(
-             title2 = module.title
+             title1 = module.title
          )
 
     for clip in module.clips:
