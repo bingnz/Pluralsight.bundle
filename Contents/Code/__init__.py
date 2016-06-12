@@ -52,6 +52,11 @@ def MainMenu():
                 key = Callback(RecentMenu),
                 thumb = R('Recent.png'),
                 title = L('RECENT_COURSES')
+            ),
+            DirectoryObject(
+                key = Callback(NewMenu),
+                thumb = R('NewStuff.png'),
+                title = L('NEW_COURSES')
             )
         ]
     )
@@ -75,6 +80,33 @@ def RecentMenu():
 
     return oc
 
+def CourseObject(course):
+    return DirectoryObject(
+                key = Callback(Modules, courseName = course.name),
+                title = course.title + ' ({0})'.format(course.level),
+                duration = course.duration,
+                summary = course.description,
+                thumb = course.image,
+                art = course.image
+            )
+
+@route(PREFIX + '/new')
+@handle_client_error
+def NewMenu():
+    Log.Info('NewMenu')
+    newCourses = g_client.new_courses()
+    oc = ObjectContainer(
+            title2 = L('NEW_COURSES'),
+            no_cache = True
+        )
+
+    for course in newCourses:
+        oc.add(
+            CourseObject(course)
+        )
+
+    return oc
+
 @route(PREFIX + '/course')
 @handle_client_error
 def Course(courseName):
@@ -82,14 +114,7 @@ def Course(courseName):
 
     course = g_client.get_course(courseName)
 
-    courseContainer = DirectoryObject(
-        key = Callback(Modules, courseName = courseName),
-        title = course.title + ' ({0})'.format(course.level),
-        duration = course.duration,
-        summary = course.description,
-        thumb = course.image,
-        art = course.image
-    )
+    courseContainer = CourseObject(course)
 
     Log.Debug('Course \'%s\' has %d modules.', courseName, len(course.modules))
 

@@ -7,6 +7,7 @@
     "LOGIN_SUCCEEDED_HEADER": "Login succeeded",
     "LOGIN_SUCCEEDED_MESSAGE": "You have been logged in successfully.",
     "RECENT_COURSES": "Recently Viewed",
+    "NEW_COURSES": "New",
     "ERROR_UNAUTHORISED": "Please ensure you have configured your login credentials.",
     "ERROR_HEADER": "Error"
 }
