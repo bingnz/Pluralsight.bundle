@@ -160,7 +160,7 @@ def Course(courseName):
 
     courseContainer = CourseObject(course)
 
-    Log.Debug('Course \'%s\' has %d modules.', courseName, len(course.modules))
+    Log.Debug('Course \'%s\' has %d modules.', repr(course), len(course.modules))
 
     return courseContainer
 

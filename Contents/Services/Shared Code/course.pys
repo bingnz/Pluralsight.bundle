@@ -7,7 +7,7 @@ class Course:
         self.data = data
 
     def __repr__(self):
-        return 'name="{0}", title="{1}"'.format(self.courseName, self.title)
+        return 'name="{0}", title="{1}"'.format(self.name, self.title)
 
     @property
     def authors(self):
