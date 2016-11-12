@@ -29,7 +29,6 @@ def MetadataObjectForURL(url):
         url = url,
         title = clip.title,
         duration = clip.duration,
-        writers = [module.author],
         thumb = course.image
     )
 

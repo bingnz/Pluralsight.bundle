@@ -223,19 +223,21 @@ def Clips(courseName, moduleName):
     matchingModules = filter(lambda x: x.name == moduleName, course.modules)
     module = matchingModules[0] if matchingModules else None
 
+    Log.Debug('Clips for module: {0}'.format(repr(module)))
+
     oc = ObjectContainer(
              title1 = module.title
          )
 
     for clip in module.clips:
         Log.Debug('Clip: {0} - {1}'.format(clip.url, repr(clip)))
+
         oc.add(EpisodeObject(
             url = clip.url,
             index = clip.index,
             title = clip.title,
             show = module.title,
             duration = clip.duration,
-            writers = [module.author],
             thumb = course.image
         ))
 

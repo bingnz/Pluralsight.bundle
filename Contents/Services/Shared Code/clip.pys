@@ -7,7 +7,7 @@ class Clip:
         self.data = data
 
     def __repr__(self):
-        return 'name="{0}", title="{1}", index={2}'.format(self.name, self.title, self.index)
+        return 'name="{0}", title="{1}", index={2}, duration={3}'.format(self.name, self.title, self.index, self.duration)
 
     @property
     def index(self):
