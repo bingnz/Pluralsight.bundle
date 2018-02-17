@@ -1,6 +1,6 @@
 from module import Module
 from author import Author
-from datetime import datetime
+from helpers import json_to_date
 
 class Course:
     def __init__(self, data):
@@ -35,7 +35,7 @@ class Course:
 
     @property
     def releaseDate(self):
-        return datetime.strptime(self.data['releaseDate'], '%Y-%m-%dT%H:%M:%SZ')
+        return json_to_date(self.data['releaseDate'])
 
     @property
     def name(self):
