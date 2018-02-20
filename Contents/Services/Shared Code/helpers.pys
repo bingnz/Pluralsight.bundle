@@ -1,0 +1,5 @@
+from datetime import datetime
+
+
+def json_to_date(jsonDate):
+    return datetime.strptime(jsonDate, '%Y-%m-%dT%H:%M:%SZ')

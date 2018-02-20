@@ -13,5 +13,6 @@
     "SEARCH": "Search",
     "SEARCH_RESULTS_FORMAT": "Search Results - '%s'",
     "ERROR_UNAUTHORISED": "Please ensure you have configured your login credentials.",
-    "ERROR_HEADER": "Error"
+    "ERROR_HEADER": "Error",
+    "BOOKMARKS": "Bookmarked Courses"
 }

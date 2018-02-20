@@ -63,6 +63,11 @@ def MainMenu():
                 thumb = R('Popular.png'),
                 title = L('POPULAR_COURSES')
             ),
+            DirectoryObject(
+                key = Callback(BookmarksMenu),
+                thumb = R('Book2.png'),
+                title = L('BOOKMARKS')
+            ),
             InputDirectoryObject(
                 key = Callback(SearchResults),
                 thumb = R('Search.png'),
@@ -240,5 +245,20 @@ def Clips(courseName, moduleName):
             duration = clip.duration,
             thumb = course.image
         ))
+
+    return oc
+
+@route(PREFIX + '/bookmarks')
+@handle_client_error
+def BookmarksMenu():
+    Log.Info('BookmarksMenu')
+    bookmarkedCourses = g_client.get_bookmarked_courses()
+    oc = ObjectContainer(
+            title1 = L('BOOKMARKS'),
+            no_cache = True
+        )
+
+    for bc in bookmarkedCourses:
+        oc.add(CourseObject(bc))
 
     return oc

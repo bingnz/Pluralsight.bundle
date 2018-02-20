@@ -2,6 +2,7 @@ from config import *
 from recentCourse import RecentCourse
 from relatedCourse import RelatedCourse
 from course import Course
+from bookmark import Bookmark
 from datetime import datetime
 from functools import wraps
 from urllib import quote
@@ -203,3 +204,22 @@ class Client:
 
         response = HTTP.Request(videos_url, data = videoRequest, headers = headers, method = 'POST')
         return JSON.ObjectFromString(response.content)['url']
+
+    @handle_unauthorised
+    def get_bookmarked_courses(self):
+        Log.Info('Getting bookmarks.')
+
+        headers = {
+            'ps-jwt': self.get_login_token(),
+            'Accept': 'application/json'
+        }
+
+        bookmarks_url = self.get_url('mobile-api/v1/user/bookmarks')
+
+        Log.Debug('User url: %s', bookmarks_url)
+        response = HTTP.Request(bookmarks_url, headers = headers)
+        rv = []
+        for b in JSON.ObjectFromString(response.content)['collection']:
+            bookmark = Bookmark(b)
+            rv.append(self.get_course(bookmark.courseName))
+        return rv

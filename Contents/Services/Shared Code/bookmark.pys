@@ -1,0 +1,45 @@
+from helpers import json_to_date
+
+
+class Bookmark:
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return '<Bookmark>'
+
+    @property
+    def id(self):
+        return self.data['id']
+
+    @property
+    def courseType(self):
+        return self.data['type']
+
+    @property
+    def courseTitle(self):
+        return self.data['courseTitle']
+
+    @property
+    def createDate(self):
+        return json_to_date(self.data['createDate'])
+
+    @property
+    def courseName(self):
+        return self.data['courseName']
+
+    @property
+    def authorHandle(self):
+        return self.data['authorName']
+
+    @property
+    def moduleHandle(self):
+        return self.data['moduleName']
+
+    @property
+    def clipIndex(self):
+        return self.data['clipIndex']
+
+    @property
+    def isRetired(self):
+        return self.data['isRetired']
